@@ -1,0 +1,146 @@
+{
+  "providers": {
+    "openai": {
+      "name": "OpenAI",
+      "models": [
+        "gpt-4",
+        "gpt-4-turbo",
+        "gpt-4o",
+        "gpt-4o-mini",
+        "gpt-3.5-turbo",
+        "o1",
+        "o1-mini",
+        "o1-preview",
+        "o3",
+        "o3-mini"
+      ],
+      "color": "#10a37f",
+      "publicKey": "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA...",
+      "signatureAlgorithm": "RS256"
+    },
+    "google": {
+      "name": "Google DeepMind",
+      "models": [
+        "gemini-2.0-flash",
+        "gemini-2.0-flash-lite",
+        "gemini-1.5-pro",
+        "gemini-1.5-flash",
+        "gemini-1.5-flash-8b",
+        "gemini-pro",
+        "gemini-ultra"
+      ],
+      "color": "#4285f4",
+      "publicKey": "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA...",
+      "signatureAlgorithm": "RS256"
+    },
+    "anthropic": {
+      "name": "Anthropic",
+      "models": [
+        "claude-sonnet-4-20250514",
+        "claude-sonnet-3-5",
+        "claude-3-5-sonnet-20241022",
+        "claude-3-opus",
+        "claude-3-sonnet",
+        "claude-3-haiku"
+      ],
+      "color": "#d97757",
+      "publicKey": "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA...",
+      "signatureAlgorithm": "RS256"
+    },
+    "xai": {
+      "name": "xAI",
+      "models": [
+        "grok-3",
+        "grok-3-mini",
+        "grok-2",
+        "grok-2-vision-1212",
+        "grok-beta",
+        "grok-1"
+      ],
+      "color": "#000000",
+      "publicKey": "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA...",
+      "signatureAlgorithm": "RS256"
+    },
+    "meta": {
+      "name": "Meta AI",
+      "models": [
+        "llama-4-scout",
+        "llama-4-maverick",
+        "llama-3.3-70b-instruct",
+        "llama-3.1-405b-instruct",
+        "llama-3.1-70b-instruct",
+        "llama-3.1-8b-instruct",
+        "llama-3-70b-instruct",
+        "llama-3-8b-instruct"
+      ],
+      "color": "#0668e1",
+      "publicKey": "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA...",
+      "signatureAlgorithm": "RS256"
+    },
+    "mistral": {
+      "name": "Mistral AI",
+      "models": [
+        "mistral-large",
+        "mistral-large-2411",
+        "mistral-small",
+        "mistral-small-2501",
+        "pixtral-large-2411",
+        "codestral-2501"
+      ],
+      "color": "#ff7000",
+      "publicKey": "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA...",
+      "signatureAlgorithm": "RS256"
+    },
+    "cohere": {
+      "name": "Cohere",
+      "models": [
+        "c4ai-command-r-plus",
+        "c4ai-command-r7b-12-2024",
+        "command-r-plus",
+        "command-r7b-12-2024",
+        "command",
+        "command-light"
+      ],
+      "color": "#39594d",
+      "publicKey": "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA...",
+      "signatureAlgorithm": "RS256"
+    },
+    "perplexity": {
+      "name": "Perplexity AI",
+      "models": [
+        "perplexity-llama-3.1-sonar-large-128k-online",
+        "perplexity-llama-3.1-sonar-small-128k-online",
+        "perplexity-llama-3.1-sonar-large-128k-chat",
+        "perplexity-llama-3.1-sonar-small-128k-chat"
+      ],
+      "color": "#6366f1",
+      "publicKey": "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA...",
+      "signatureAlgorithm": "RS256"
+    },
+    "deepseek": {
+      "name": "DeepSeek",
+      "models": [
+        "deepseek-chat",
+        "deepseek-coder",
+        "deepseek-v3",
+        "deepseek-r1"
+      ],
+      "color": "#4f46e5",
+      "publicKey": "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA...",
+      "signatureAlgorithm": "RS256"
+    },
+    "custom": {
+      "name": "Custom Provider",
+      "models": [],
+      "color": "#8b949e",
+      "publicKey": "",
+      "signatureAlgorithm": "none"
+    }
+  },
+  "attribution": {
+    "version": "1.0",
+    "format": "xpiitag-v1",
+    "encoding": "base64",
+    "timestampFormat": "ISO8601"
+  }
+}
