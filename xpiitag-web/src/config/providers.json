@@ -1,0 +1,57 @@
+{
+  "version": "1.0",
+  "providers": [
+    {
+      "id": "openai",
+      "name": "OpenAI",
+      "models": ["GPT-4", "GPT-4 Turbo", "GPT-3.5 Turbo", "DALL-E 3", "Whisper"],
+      "publicKey": "openai_pub_key_placeholder"
+    },
+    {
+      "id": "google",
+      "name": "Google",
+      "models": ["Gemini Pro", "Gemini Ultra", "Gemini Nano", "PaLM 2", "Imagen"],
+      "publicKey": "google_pub_key_placeholder"
+    },
+    {
+      "id": "anthropic",
+      "name": "Anthropic",
+      "models": ["Claude 3 Opus", "Claude 3 Sonnet", "Claude 3 Haiku", "Claude 2.1"],
+      "publicKey": "anthropic_pub_key_placeholder"
+    },
+    {
+      "id": "xai",
+      "name": "xAI",
+      "models": ["Grok-1", "Grok-1.5", "Grok-2"],
+      "publicKey": "xai_pub_key_placeholder"
+    },
+    {
+      "id": "meta",
+      "name": "Meta AI",
+      "models": ["Llama 2", "Llama 3", "Code Llama", "Llama 3.1"],
+      "publicKey": "meta_pub_key_placeholder"
+    },
+    {
+      "id": "mistral",
+      "name": "Mistral AI",
+      "models": ["Mistral Large", "Mistral Medium", "Mistral Small", "Mixtral 8x22B"],
+      "publicKey": "mistral_pub_key_placeholder"
+    },
+    {
+      "id": "cohere",
+      "name": "Cohere",
+      "models": ["Command", "Command R", "Command R+", "Aya"],
+      "publicKey": "cohere_pub_key_placeholder"
+    },
+    {
+      "id": "stability",
+      "name": "Stability AI",
+      "models": ["Stable Diffusion XL", "Stable Diffusion 3", "Stable Video"],
+      "publicKey": "stability_pub_key_placeholder"
+    }
+  ],
+  "schema": {
+    "required": ["version", "provider", "model", "timestamp", "fingerprint"],
+    "optional": ["signature", "metadata", "contentHash"]
+  }
+}
