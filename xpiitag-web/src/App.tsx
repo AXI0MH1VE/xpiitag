@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { motion, AnimatePresence } from 'motion/react'
+import { motion, AnimatePresence } from 'framer-motion'
 import { 
   Shield, 
   Tag, 
@@ -16,22 +16,11 @@ import {
 } from 'lucide-react'
 import { ImageSteganography } from './lib/steganography'
 import { TextEmbedder } from './lib/text-embedder'
-import { Verifier, XPIIMetadata } from './lib/verifier'
+import { C2PAVerifier, C2PAManifest, C2PAMetadata, VerificationResult } from './lib/verifier'
 import providersData from './config/providers.json'
 
 type Tab = 'tag' | 'verify'
 type ContentType = 'image' | 'text'
-
-interface VerificationStatus {
-  valid: boolean;
-  tampered: boolean;
-  provider?: string;
-  model?: string;
-  timestamp?: string;
-  fingerprint?: string;
-  errors: string[];
-  warnings: string[];
-}
 
 function App() {
   const [activeTab, setActiveTab] = useState<Tab>('tag')
@@ -44,8 +33,9 @@ function App() {
     success: boolean;
     message: string;
     dataUrl?: string;
-    metadata?: XPIIMetadata;
-    verification?: VerificationStatus;
+    metadata?: C2PAMetadata;
+    manifest?: C2PAManifest;
+    verification?: VerificationResult;
   } | null>(null)
 
   const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -65,17 +55,18 @@ function App() {
     }
   }
 
-  const generateSampleMetadata = (): XPIIMetadata => {
+  const generateSampleManifest = async (): Promise<C2PAManifest> => {
     const provider = providersData.providers[0]
-    return {
-      version: '1.0',
-      provider: provider.name,
-      model: provider.models[0],
-      timestamp: new Date().toISOString(),
-      fingerprint: 'a'.repeat(64),
-      contentHash: 'b'.repeat(64),
-      signature: 'demo-signature'
-    }
+    const sampleContent = 'Sample AI-generated content for attribution'
+    return await C2PAVerifier.createManifest(
+      provider.name,
+      provider.models[0],
+      sampleContent,
+      {
+        title: 'AI Generated Content',
+        creator: provider.name
+      }
+    )
   }
 
   const handleTag = async () => {
@@ -88,15 +79,16 @@ function App() {
     
     try {
       if (contentType === 'image' && selectedFile) {
-        const metadata = generateSampleMetadata()
-        const embedResult = await ImageSteganography.embed(selectedFile, metadata)
+        const manifest = await generateSampleManifest()
+        const embedResult = await ImageSteganography.embed(selectedFile, manifest as unknown as Record<string, unknown>)
         
         if (embedResult.success && embedResult.dataUrl) {
           setResult({
             success: true,
-            message: 'Metadata embedded successfully',
+            message: 'C2PA manifest embedded successfully',
             dataUrl: embedResult.dataUrl,
-            metadata
+            manifest,
+            metadata: manifest['c2pa:claim']['c2pa:metadata'] || undefined
           })
         } else {
           setResult({
@@ -105,16 +97,16 @@ function App() {
           })
         }
       } else if (contentType === 'text' && textContent) {
-        const metadata = generateSampleMetadata()
-        const embedResult = TextEmbedder.embed(textContent, metadata)
+        const manifest = await generateSampleManifest()
+        const embedResult = TextEmbedder.embed(textContent, manifest as unknown as Record<string, unknown>)
         
         if (embedResult.success && embedResult.text) {
           setResult({
             success: true,
-            message: 'Metadata embedded successfully',
-            metadata
+            message: 'C2PA manifest embedded successfully',
+            manifest,
+            metadata: manifest['c2pa:claim']['c2pa:metadata'] || undefined
           })
-          // Copy to clipboard
           navigator.clipboard.writeText(embedResult.text)
         } else {
           setResult({
@@ -146,7 +138,7 @@ function App() {
         const extractResult = await ImageSteganography.extract(selectedFile)
         
         if (extractResult.success && extractResult.metadata) {
-          const verification = Verifier.verify(extractResult.metadata)
+          const verification = await C2PAVerifier.verify(extractResult.metadata)
           setResult({
             success: verification.valid,
             message: verification.valid ? 'Verification successful' : 'Verification failed',
@@ -162,12 +154,12 @@ function App() {
         const extractResult = TextEmbedder.extract(textContent)
         
         if (extractResult.success && extractResult.metadata) {
-          const verification = Verifier.verify(extractResult.metadata)
+          const verification = await C2PAVerifier.verify(extractResult.metadata)
           setResult({
             success: verification.valid,
             message: verification.valid ? 'Verification successful' : 'Verification failed',
             verification,
-            metadata: extractResult.metadata as XPIIMetadata
+            metadata: extractResult.metadata as unknown as C2PAMetadata
           })
         } else {
           setResult({
@@ -177,13 +169,14 @@ function App() {
         }
       } else if (jsonConfig) {
         try {
-          const metadata = JSON.parse(jsonConfig)
-          const verification = Verifier.verify(metadata)
+          const manifest = JSON.parse(jsonConfig)
+          const verification = await C2PAVerifier.verify(manifest)
           setResult({
             success: verification.valid,
-            message: verification.valid ? 'JSON valid' : 'JSON invalid',
+            message: verification.valid ? 'C2PA manifest valid' : 'C2PA manifest invalid',
             verification,
-            metadata
+            manifest,
+            metadata: manifest['c2pa:claim']?.['c2pa:metadata']
           })
         } catch {
           setResult({
@@ -336,7 +329,7 @@ function App() {
                 <textarea
                   value={jsonConfig}
                   onChange={(e) => setJsonConfig(e.target.value)}
-                  placeholder='{"version": "1.0", "provider": "OpenAI", "model": "GPT-4", "timestamp": "2024-01-01T00:00:00Z", "fingerprint": "..."}'
+                  placeholder='{"@context": ["https://c2pa.org/2.0"], "c2pa:claim": {...}}'
                   className="input-field w-full h-32 resize-none font-mono text-xs"
                 />
               </div>
@@ -419,9 +412,9 @@ function App() {
                           </p>
                         </div>
                         <div className="bg-matte-900/50 rounded-lg p-3">
-                          <p className="text-xs text-gray-500 mb-1">Fingerprint</p>
-                          <p className="font-mono text-xs text-neon-blue truncate">
-                            {result.verification.fingerprint?.slice(0, 16)}...
+                          <p className="text-xs text-gray-500 mb-1">Processing Time</p>
+                          <p className="font-mono text-xs text-neon-blue">
+                            {result.verification.processing_time_ms}ms
                           </p>
                         </div>
                       </div>
@@ -429,7 +422,13 @@ function App() {
                       {/* Status Badges */}
                       <div className="flex gap-2 flex-wrap">
                         <span className={`status-badge ${result.verification.valid ? 'status-valid' : 'status-invalid'}`}>
-                          {result.verification.valid ? 'Valid' : 'Invalid'}
+                          {result.verification.valid ? 'C2PA Valid' : 'C2PA Invalid'}
+                        </span>
+                        <span className={`status-badge ${result.verification.signature_valid ? 'status-valid' : 'status-invalid'}`}>
+                          Signature {result.verification.signature_valid ? '✓' : '✗'}
+                        </span>
+                        <span className={`status-badge ${result.verification.certificate_valid ? 'status-valid' : 'status-unknown'}`}>
+                          Certificate {result.verification.certificate_valid ? '✓' : '✗'}
                         </span>
                         {result.verification.tampered && (
                           <span className="status-badge status-invalid">Tampered</span>
