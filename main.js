@@ -7,6 +7,9 @@ const { app, BrowserWindow, ipcMain, dialog, Menu, shell } = require('electron')
 const path = require('path');
 const fs = require('fs');
 
+// Debug - verify ipcMain is available
+console.log('ipcMain available:', typeof ipcMain !== 'undefined');
+
 // Logging setup - defer until app is ready
 let log;
 
